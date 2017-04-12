@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application id="Application_ID" version="6" xmlns="http://java.sun.com/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
+    <display-name>RIT_EAR</display-name>
+    <module id="WebModule_1416318558372">
+        <web>
+            <web-uri>RIT_WEB.war</web-uri>
+            <context-root>RIT</context-root>
+        </web>
+    </module>
+    <module id="Module_1477643685980">
+        <ejb>RIT_EJB.jar</ejb>
+    </module>
+</application>

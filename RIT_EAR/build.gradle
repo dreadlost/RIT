@@ -1,0 +1,22 @@
+apply plugin: 'ear'
+
+dependencies {
+    deploy project(path: ':RIT_WEB', configuration: 'archives')
+    deploy project(':RIT_EJB')
+    earlib group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
+    earlib group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+
+}
+
+ear {
+    appDirName "src"
+
+    libDirName "lib"
+
+    manifest {
+        attributes('Implementation-Title': 'Elardo2EAR.ear',
+                'Implementation-Version': version)
+
+        archiveName project.name + '.ear'
+    }
+}
