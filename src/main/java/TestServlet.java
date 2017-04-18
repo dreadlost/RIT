@@ -15,6 +15,7 @@ public class TestServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log.info("Работает нахуй");
+        log.debug("Заебись");
         req.setAttribute("name", "Дима Главатских");
         req.getRequestDispatcher("mypage.jsp").forward(req, resp);
     }

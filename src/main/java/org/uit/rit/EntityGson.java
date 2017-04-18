@@ -1,3 +1,5 @@
+package org.uit.rit;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -15,7 +17,6 @@ public class EntityGson<T> {
     public EntityGson() {
         GsonBuilder builder = new GsonBuilder();
         builder.setDateFormat(dateFormat);
-        //builder.setDateFormat("{\"month\":MM,\"day\":dd,\"year\":yyyy,\"hours\":hh,\"minutes\":mm,\"seconds\":ss}");
         gson = builder.create();
     }
 

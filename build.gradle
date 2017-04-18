@@ -1,16 +1,21 @@
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'idea'
+apply plugin: 'war'
+apply plugin: 'java'
 
-    sourceCompatibility = 1.8
-    version = '1.0.0'
-
-    repositories {
-        mavenCentral()
-    }
-    dependencies{
-        compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
-        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
-    }
+repositories {
+    mavenCentral()
 }
 
+dependencies {
+    providedCompile 'javax:javaee-api:7.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+    compile group: 'org.json', name: 'json', version: '20160810'
+    compile 'com.google.code.gson:gson:2.3.1'
+}
+
+version = '1.0.0'
+war {
+    manifest.attributes("Implementation-Title": project.name,
+            "Implementation-Version": rootProject.version)
+    archiveName = project.name + '.war'
+}
