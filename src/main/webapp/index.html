@@ -1,10 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app">
 <head>
     <meta charset="UTF-8">
-    <title>Активы компаний</title>
+    <title>Title</title>
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
 </head>
-<body>
-ывап
+<body data-ng-controller="IndexController as $ctrl">
+<h3>Активы</h3>
+<div ng-repeat="item in $ctrl.data">
+    <div ng-if="item.bank" class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-lg-12">
+                Номер актива: {{item.id}}
+            </div>
+            <div class="col-lg-12">
+                Название банка: {{item.bank.name}}
+            </div>
+            <div class="col-lg-12">
+                Название счета: {{item.bank.numberAccount}}
+            </div>
+            <div class="col-lg-12">
+                Сумма: {{item.bank.summ}} {{item.bank.currencyName}}
+            </div>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal"
+                    ng-click="$ctrl.selectedActive = item;$ctrl.newItemType='bank';$ctrl.modalType = 'edit'">
+                Редактировать
+            </button>
+            <button class="btn btn-danger" ng-click="$ctrl.removeItem(item);">Удалить</button>
+        </div>
+    </div>
+    <div ng-if="item.cash" class="panel panel-default">
+        <div class="panel-body">
+            <div class="col-lg-12">
+                Номер актива: {{item.id}}
+            </div>
+            <div class="col-lg-12">
+                Название: {{item.cash.name}}
+            </div>
+            <div class="col-lg-12">
+                Название счета: {{item.cash.numberAccount}}
+            </div>
+            <div class="col-lg-12">
+                Сумма: {{item.cash.summ}} {{item.cash.currencyName}}
+            </div>
+            <button class="btn btn-primary"
+                    ng-click="$ctrl.selectedActive = item;$ctrl.newItemType='cash';$ctrl.modalType = 'edit';"
+                    data-toggle="modal" data-target="#editModal">
+                Редактировать
+            </button>
+            <button class="btn btn-danger" ng-click="$ctrl.removeItem(item)">Удалить</button>
+        </div>
+    </div>
+    <div ng-if="!item.bank && !item.cash">
+        <div class="col-lg-12">
+            primary: {{item.selectedActive.primary}}
+        </div>
+        <div class="col-lg-12">
+            residual: {{item.selectedActive.residual}}
+        </div>
+        <div class="col-lg-12">
+            valuation: {{item.selectedActive.valuation}}
+        </div>
+        <button class="btn btn-primary"
+                ng-click="$ctrl.selectedActive = item;$ctrl.newItemType='notmoney';$ctrl.modalType = 'edit';"
+                data-toggle="modal" data-target="#editModal">
+            Редактировать
+        </button>
+        <button class="btn btn-danger" ng-click="$ctrl.removeItem(item)">Удалить</button>
+    </div>
+</div>
+<button class="btn btn-success" data-toggle="modal" data-target="#editModal"
+        ng-click="$ctrl.newItemType='bank';$ctrl.selectedActive = {};$ctrl.modalType = 'create'">Добавить новый актив
+</button>
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div ng-if="$ctrl.modalType == 'create'">
+                    <span>Банк</span><input type="radio" ng-model="$ctrl.newItemType" value="bank">
+                    <span>Счет</span><input type="radio" ng-model="$ctrl.newItemType" value="cash">
+                    <span>Неденежный</span><input type="radio" ng-model="$ctrl.newItemType" value="notmoney">
+                </div>
+                <div ng-if="$ctrl.newItemType == 'bank'">
+                    Название счета : <input type="text" ng-model="$ctrl.selectedActive.name"><br>
+                    Название банка : <input type="text" ng-model="$ctrl.selectedActive.bank.name"><br>
+                    Сумма : <input type="text" ng-model="$ctrl.selectedActive.bank.summ"><br>
+                    Валюта : <input type="text" ng-model="$ctrl.selectedActive.bank.currencyName"><br>
+                    Номер счета : <input type="text" ng-model="$ctrl.selectedActive.bank.numberAccount"><br>
+                </div>
+                <div ng-if="$ctrl.newItemType == 'cash'">
+                    Название счета : <input type="text" ng-model="$ctrl.selectedActive.name"><br>
+                    Название : <input type="text" ng-model="$ctrl.selectedActive.cash.name"><br>
+                    Сумма : <input type="text" ng-model="$ctrl.selectedActive.cash.summ"><br>
+                    Валюта : <input type="text" ng-model="$ctrl.selectedActive.cash.currencyName"><br>
+                </div>
+                <div ng-if="$ctrl.newItemType == 'notmoney'">
+                    primary : <input type="text" ng-model="$ctrl.selectedActive.primary"><br>
+                    residual : <input type="text" ng-model="$ctrl.selectedActive.residual"><br>
+                    valuation : <input type="text" ng-model="$ctrl.selectedActive.valuation"><br>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="$ctrl.patch()">Сохранить
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 </body>
+<script src="vendor/angular.min.js"></script>
+<script src="vendor/angular-resource.js"></script>
+<script src="vendor/jquery-3.2.1.min.js"></script>
+<script src="vendor/bootstrap.min.js"></script>
+<script src="app/rest.js"></script>
+<script src="app/index.js"></script>
 </html>

@@ -6,17 +6,14 @@ import org.json.JSONObject;
 import org.uit.rit.EntityGson;
 import org.uit.rit.entity.*;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Path("/ab")
+@Path("/rit")
 @Produces("application/json; charset=UTF-8")
 public class RitApi {
 
@@ -57,21 +54,23 @@ public class RitApi {
     @Produces("application/json; charset=UTF-8")
     public Response removeActive(@QueryParam("id") int id) {
         try {
-            for (Active active : activeMap) {
-                if (active.getId() == id) {
-                    activeMap.remove(active);
-                }
-            }
+            activeMap.removeAll(activeMap);
             return Response.ok(stringJson.toJson("Актив удален успешно")).build();
         } catch (Exception e) {
             log.error("Ошибка удаления актива", e);
-            return Response.ok(stringJson.toJson("Произошла ошибка при удалении актива")).build();
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GET
     @Path("/addMonetaryBank")
-    public Response addMonetaryBank(int id, String name, int summ, String currencyName, String nameBank, int numberAcc) {
+    @Produces("application/json; charset=UTF-8")
+    public Response addMonetaryBank(@QueryParam("id") int id,
+                                    @QueryParam("name") String name,
+                                    @QueryParam("summ") int summ,
+                                    @QueryParam("currencyName") String currencyName,
+                                    @QueryParam("nameBank") String nameBank,
+                                    @QueryParam("numberAcc") int numberAcc) {
         try {
             Bank bank = new Bank(summ, currencyName, nameBank, numberAcc);
             Monetary monetary = new Monetary(id, name, bank);
@@ -79,13 +78,19 @@ public class RitApi {
             return Response.ok(stringJson.toJson("Денежный актив добавлен успешно")).build();
         } catch (Exception e) {
             log.error("Ошибка добавления денежного актива", e);
-            return Response.ok(stringJson.toJson("Произошла ошибка добавдения денежного актива")).build();
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GET
     @Path("/addMonetaryCash")
-    public Response addMonetaryCash(int id, String name, int summ, String currencyName, String nameCash, int numberAcc) {
+    @Produces("application/json; charset=UTF-8")
+    public Response addMonetaryCash(@QueryParam("id") int id,
+                                    @QueryParam("name") String name,
+                                    @QueryParam("summ") int summ,
+                                    @QueryParam("currencyName") String currencyName,
+                                    @QueryParam("nameCash") String nameCash,
+                                    @QueryParam("numberAcc") int numberAcc) {
         try {
             Cash cash = new Cash(summ, currencyName, nameCash);
             Monetary monetary = new Monetary(id, name, cash);
@@ -93,13 +98,19 @@ public class RitApi {
             return Response.ok(stringJson.toJson("Денежный актив добавлен успешно")).build();
         } catch (Exception e) {
             log.error("Ошибка добавления денежного актива", e);
-            return Response.ok(stringJson.toJson("Произошла ошибка добавдения денежного актива")).build();
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GET
     @Path("/addNonMonetary")
-    public Response addNonMonetary(int id, String name, int primary, int residual, int valuation, String measurement) {
+    @Produces("application/json; charset=UTF-8")
+    public Response addNonMonetary(@QueryParam("id") int id,
+                                   @QueryParam("name") String name,
+                                   @QueryParam("primary") int primary,
+                                   @QueryParam("residual") int residual,
+                                   @QueryParam("valuation") int valuation,
+                                   @QueryParam("measurement") String measurement) {
         try {
             Map<String, Object> map;
             JSONObject jsonObj = new JSONObject(measurement);
@@ -109,7 +120,84 @@ public class RitApi {
             return Response.ok(stringJson.toJson("НеДенежный актив добавлен успешно")).build();
         } catch (Exception e) {
             log.error("Ошибка добавления Неденежного актива", e);
-            return Response.ok(stringJson.toJson("Произошла ошибка добавдения Неденежного актива")).build();
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GET
+    @Path("/updateMonetaryBank")
+    @Produces("application/json; charset=UTF-8")
+    public Response updateMonetaryBank(@QueryParam("id") int id,
+                                       @QueryParam("name") String name,
+                                       @QueryParam("summ") int summ,
+                                       @QueryParam("currencyName") String currencyName,
+                                       @QueryParam("nameBank") String nameBank,
+                                       @QueryParam("numberAcc") int numberAcc) {
+        try {
+            Bank bank = new Bank(summ, currencyName, nameBank, numberAcc);
+            Monetary monetary = new Monetary(id, name, bank);
+            for (Active active : activeMap) {
+                if (active instanceof Monetary && active.getId() == id) {
+                    int index = activeMap.indexOf(active);
+                    activeMap.add(index, monetary);
+                }
+            }
+            return Response.ok(stringJson.toJson("Денежный актив добавлен успешно")).build();
+        } catch (Exception e) {
+            log.error("Ошибка добавления денежного актива", e);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GET
+    @Path("/updateMonetaryCash")
+    @Produces("application/json; charset=UTF-8")
+    public Response updateMonetaryCash(@QueryParam("id") int id,
+                                       @QueryParam("name") String name,
+                                       @QueryParam("summ") int summ,
+                                       @QueryParam("currencyName") String currencyName,
+                                       @QueryParam("nameCash") String nameCash,
+                                       @QueryParam("numberAcc") int numberAcc) {
+        try {
+            Cash cash = new Cash(summ, currencyName, nameCash);
+            Monetary monetary = new Monetary(id, name, cash);
+            for (Active active : activeMap) {
+                if (active instanceof Monetary && active.getId() == id) {
+                    int index = activeMap.indexOf(active);
+                    activeMap.add(index, monetary);
+                }
+            }
+            return Response.ok(stringJson.toJson("Денежный актив добавлен успешно")).build();
+        } catch (Exception e) {
+            log.error("Ошибка обновления денежного актива", e);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GET
+    @Path("/updateNonMonetary")
+    @Produces("application/json; charset=UTF-8")
+    public Response updateNonMonetary(@QueryParam("id") int id,
+                                      @QueryParam("name") String name,
+                                      @QueryParam("primary") int primary,
+                                      @QueryParam("residual") int residual,
+                                      @QueryParam("valuation") int valuation,
+                                      @QueryParam("measurement") String measurement) {
+        try {
+            Map<String, Object> map;
+            JSONObject jsonObj = new JSONObject(measurement);
+            map = jsonObj.toMap();
+            NonMonetary nonMonetary = new NonMonetary(id, name, primary, residual, valuation, map);
+            for (Active active : activeMap) {
+                if (active instanceof NonMonetary && active.getId() == id) {
+                    int index = activeMap.indexOf(active);
+                    activeMap.add(index, nonMonetary);
+                }
+            }
+            return Response.ok(stringJson.toJson("НеДенежный актив обновлен успешно")).build();
+        } catch (Exception e) {
+            log.error("Ошибка обновления Неденежного актива", e);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
